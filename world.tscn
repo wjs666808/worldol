@@ -1,0 +1,457 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://char_stats.gd" id="1_stats"]
+[ext_resource type="Script" path="res://player.gd" id="2_player"]
+[ext_resource type="Script" path="res://enemy.gd" id="3_enemy"]
+[ext_resource type="Script" path="res://item_data.gd" id="4_item"]
+[ext_resource type="Script" path="res://character_ui.gd" id="5_charui"]
+[ext_resource type="Script" path="res://debug_ui.gd" id="6_debug"]
+[ext_resource type="Script" path="res://inventory.gd" id="7_inv"]
+[ext_resource type="Script" path="res://skill_ui.gd" id="8_skillui"]
+
+[sub_resource type="RectangleShape2D" id="Rect_player"]
+size = Vector2(48, 48)
+
+[sub_resource type="RectangleShape2D" id="Rect_slime"]
+size = Vector2(48, 48)
+
+[sub_resource type="RectangleShape2D" id="Rect_wolf"]
+size = Vector2(52, 52)
+
+[sub_resource type="Resource" id="Item_wolf_claw"]
+script = ExtResource("4_item")
+display_name = "野狼爪"
+item_type = 10
+price = 20
+strength_bonus = 2
+agility_bonus = 1
+description = "野狼的利爪,蕴含野兽之力"
+
+[sub_resource type="Resource" id="Enemy_slime"]
+script = ExtResource("1_stats")
+display_name = "史莱姆"
+level = 1
+strength = 8
+intelligence = 2
+perception = 5
+agility = 5
+constitution = 8
+gold_reward = 10
+
+[sub_resource type="Resource" id="Enemy_wolf"]
+script = ExtResource("1_stats")
+display_name = "野狼"
+level = 2
+strength = 11
+intelligence = 2
+perception = 6
+agility = 12
+constitution = 10
+gold_reward = 25
+loot_items = [SubResource("Item_wolf_claw")]
+
+[node name="World" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.176, 0.29, 0.18, 1)
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(576, 324)
+script = ExtResource("2_player")
+
+[node name="Body" type="ColorRect" parent="Player"]
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0.29, 0.565, 0.85, 1)
+
+[node name="Collision" type="CollisionShape2D" parent="Player"]
+shape = SubResource("Rect_player")
+
+[node name="EnemySlime" type="Area2D" parent="."]
+position = Vector2(330, 250)
+script = ExtResource("3_enemy")
+enemy_stats = SubResource("Enemy_slime")
+
+[node name="Body" type="ColorRect" parent="EnemySlime"]
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0.85, 0.29, 0.29, 1)
+
+[node name="Collision" type="CollisionShape2D" parent="EnemySlime"]
+shape = SubResource("Rect_slime")
+
+[node name="EnemyWolf" type="Area2D" parent="."]
+position = Vector2(830, 400)
+script = ExtResource("3_enemy")
+enemy_stats = SubResource("Enemy_wolf")
+
+[node name="Body" type="ColorRect" parent="EnemyWolf"]
+offset_left = -26.0
+offset_top = -26.0
+offset_right = 26.0
+offset_bottom = 26.0
+color = Color(0.85, 0.45, 0.2, 1)
+
+[node name="Collision" type="CollisionShape2D" parent="EnemyWolf"]
+shape = SubResource("Rect_wolf")
+
+[node name="CharacterUI" type="Node" parent="."]
+script = ExtResource("5_charui")
+
+[node name="Buttons" type="CanvasLayer" parent="CharacterUI"]
+
+[node name="CharacterButton" type="Button" parent="CharacterUI/Buttons"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -170.0
+offset_top = -60.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "角色"
+
+[node name="Panel" type="CanvasLayer" parent="CharacterUI"]
+layer = 10
+visible = false
+
+[node name="Center" type="PanelContainer" parent="CharacterUI/Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -290.0
+offset_right = 260.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CharacterUI/Panel/Center"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="CharacterUI/Panel/Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "角色属性"
+
+[node name="Header" type="HBoxContainer" parent="CharacterUI/Panel/Center/VBox"]
+layout_mode = 2
+
+[node name="HeroSelect" type="OptionButton" parent="CharacterUI/Panel/Center/VBox/Header"]
+layout_mode = 2
+text = "英雄1"
+
+[node name="InfoLabel" type="Label" parent="CharacterUI/Panel/Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "冒险者 Lv.1    未分配属性点:0"
+
+[node name="StatList" type="VBoxContainer" parent="CharacterUI/Panel/Center/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="DerivedScroll" type="ScrollContainer" parent="CharacterUI/Panel/Center/VBox"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DerivedLabel" type="Label" parent="CharacterUI/Panel/Center/VBox/DerivedScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "生命/魔法/三系攻击防御等派生属性"
+
+[node name="CloseButton" type="Button" parent="CharacterUI/Panel/Center/VBox"]
+layout_mode = 2
+text = "关闭"
+
+[node name="DebugUI" type="Node" parent="."]
+script = ExtResource("6_debug")
+
+[node name="Buttons" type="CanvasLayer" parent="DebugUI"]
+
+[node name="DebugButton" type="Button" parent="DebugUI/Buttons"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -60.0
+offset_right = -180.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "设置"
+
+[node name="Panel" type="CanvasLayer" parent="DebugUI"]
+layer = 11
+visible = false
+
+[node name="Center" type="PanelContainer" parent="DebugUI/Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -270.0
+offset_top = -280.0
+offset_right = 270.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="DebugUI/Panel/Center"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="DebugUI/Panel/Center/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="DebugUI/Panel/Center/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "调试设置"
+
+[node name="TargetSelect" type="OptionButton" parent="DebugUI/Panel/Center/VBox/Header"]
+layout_mode = 2
+text = "玩家"
+
+[node name="TeamRow" type="HBoxContainer" parent="DebugUI/Panel/Center/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddHeroButton" type="Button" parent="DebugUI/Panel/Center/VBox/TeamRow"]
+layout_mode = 2
+text = "添加英雄"
+
+[node name="RemoveHeroButton" type="Button" parent="DebugUI/Panel/Center/VBox/TeamRow"]
+layout_mode = 2
+text = "移除英雄"
+
+[node name="EnemyCountLabel" type="Label" parent="DebugUI/Panel/Center/VBox/TeamRow"]
+layout_mode = 2
+text = "敌人数量: 3"
+
+[node name="EnemyMinus" type="Button" parent="DebugUI/Panel/Center/VBox/TeamRow"]
+layout_mode = 2
+text = "-"
+
+[node name="EnemyPlus" type="Button" parent="DebugUI/Panel/Center/VBox/TeamRow"]
+layout_mode = 2
+text = "+"
+
+[node name="AttrScroll" type="ScrollContainer" parent="DebugUI/Panel/Center/VBox"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AttrList" type="VBoxContainer" parent="DebugUI/Panel/Center/VBox/AttrScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ItemList" type="VBoxContainer" parent="DebugUI/Panel/Center/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="CloseButton" type="Button" parent="DebugUI/Panel/Center/VBox"]
+layout_mode = 2
+text = "关闭"
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("7_inv")
+
+[node name="Buttons" type="CanvasLayer" parent="Inventory"]
+
+[node name="BackpackButton" type="Button" parent="Inventory/Buttons"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -470.0
+offset_top = -60.0
+offset_right = -330.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "背包"
+
+[node name="BackpackUI" type="CanvasLayer" parent="Inventory"]
+layer = 12
+visible = false
+
+[node name="Panel" type="PanelContainer" parent="Inventory/BackpackUI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260
+offset_top = -270
+offset_right = 260
+offset_bottom = 270
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Inventory/BackpackUI/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Inventory/BackpackUI/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "背包"
+
+[node name="GoldLabel" type="Label" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+layout_mode = 2
+text = "金币: 0"
+
+[node name="EquipScroll" type="ScrollContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EquipList" type="VBoxContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox/EquipScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ItemScroll" type="ScrollContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+
+[node name="ItemList" type="VBoxContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox/ItemScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="CloseButton" type="Button" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+layout_mode = 2
+text = "关闭"
+
+[node name="SkillUI" type="Node" parent="."]
+script = ExtResource("8_skillui")
+
+[node name="Buttons" type="CanvasLayer" parent="SkillUI"]
+
+[node name="SkillButton" type="Button" parent="SkillUI/Buttons"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -620.0
+offset_top = -60.0
+offset_right = -480.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "技能"
+
+[node name="Panel" type="CanvasLayer" parent="SkillUI"]
+layer = 13
+visible = false
+
+[node name="Center" type="PanelContainer" parent="SkillUI/Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -290.0
+offset_right = 280.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="SkillUI/Panel/Center"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="SkillUI/Panel/Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "技能配置"
+
+[node name="AutoActiveRow" type="HBoxContainer" parent="SkillUI/Panel/Center/VBox"]
+layout_mode = 2
+
+[node name="AutoActiveLabel" type="Label" parent="SkillUI/Panel/Center/VBox/AutoActiveRow"]
+layout_mode = 2
+text = "自动战斗技能: 无(自动选择)"
+
+[node name="AutoTitle" type="Label" parent="SkillUI/Panel/Center/VBox"]
+layout_mode = 2
+text = "自动技能(按回合循环,战斗中不可更改)"
+
+[node name="AutoScroll" type="ScrollContainer" parent="SkillUI/Panel/Center/VBox"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+
+[node name="AutoList" type="VBoxContainer" parent="SkillUI/Panel/Center/VBox/AutoScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ManualTitle" type="Label" parent="SkillUI/Panel/Center/VBox"]
+layout_mode = 2
+text = "手动主动技能(战斗中主动选择)"
+
+[node name="ManualScroll" type="ScrollContainer" parent="SkillUI/Panel/Center/VBox"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+
+[node name="ManualList" type="VBoxContainer" parent="SkillUI/Panel/Center/VBox/ManualScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="PoolTitle" type="Label" parent="SkillUI/Panel/Center/VBox"]
+layout_mode = 2
+text = "技能池(点击加入对应列表)"
+
+[node name="PoolScroll" type="ScrollContainer" parent="SkillUI/Panel/Center/VBox"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PoolList" type="VBoxContainer" parent="SkillUI/Panel/Center/VBox/PoolScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="CloseButton" type="Button" parent="SkillUI/Panel/Center/VBox"]
+layout_mode = 2
+text = "关闭"
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Hint" type="Label" parent="UI"]
+offset_left = 40.0
+offset_top = 20.0
+offset_right = 700.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 18
+text = "方向键 / WASD 移动 —— 接触怪物进入战斗,点「角色」分配属性点"

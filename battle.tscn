@@ -1,0 +1,260 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://char_stats.gd" id="1_stats"]
+[ext_resource type="Script" path="res://battle.gd" id="2_battle"]
+[ext_resource type="Script" path="res://skill_data.gd" id="3_skill"]
+[ext_resource type="Script" path="res://item_data.gd" id="4_item"]
+[ext_resource type="Script" path="res://inventory.gd" id="5_inv"]
+
+[sub_resource type="Resource" id="Item_wolf_claw"]
+script = ExtResource("4_item")
+display_name = "野狼爪"
+item_type = 10
+price = 20
+strength_bonus = 2
+agility_bonus = 1
+description = "野狼的利爪,蕴含野兽之力"
+
+[sub_resource type="Resource" id="Item_goblin_sword"]
+script = ExtResource("4_item")
+display_name = "哥布林短剑"
+item_type = 8
+price = 35
+strength_bonus = 3
+weapon_damage_bonus = 4
+description = "哥布林打造的粗糙短剑"
+
+[sub_resource type="Resource" id="Item_iron_armor"]
+script = ExtResource("4_item")
+display_name = "铁甲"
+item_type = 2
+price = 40
+constitution_bonus = 2
+perception_bonus = 1
+description = "结实的铁制护甲"
+
+[sub_resource type="Resource" id="Item_heal_potion"]
+script = ExtResource("4_item")
+display_name = "治疗药水"
+item_type = 13
+price = 15
+hp_restore = 50
+description = "恢复 50 点生命"
+
+[sub_resource type="Resource" id="Enemy_slime"]
+script = ExtResource("1_stats")
+display_name = "史莱姆"
+level = 1
+strength = 8
+intelligence = 2
+perception = 5
+agility = 5
+constitution = 8
+gold_reward = 10
+
+[sub_resource type="Resource" id="Enemy_wolf"]
+script = ExtResource("1_stats")
+display_name = "野狼"
+level = 2
+strength = 11
+intelligence = 2
+perception = 6
+agility = 12
+constitution = 10
+gold_reward = 25
+loot_items = [SubResource("Item_wolf_claw")]
+
+[sub_resource type="Resource" id="Enemy_goblin"]
+script = ExtResource("1_stats")
+display_name = "哥布林"
+level = 3
+strength = 13
+intelligence = 8
+perception = 8
+agility = 10
+constitution = 12
+gold_reward = 40
+loot_items = [SubResource("Item_goblin_sword")]
+
+[node name="Battle" type="Node"]
+script = ExtResource("2_battle")
+player_skills = []
+enemy_wave = [SubResource("Enemy_slime"), SubResource("Enemy_wolf"), SubResource("Enemy_goblin")]
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("5_inv")
+
+[node name="BackpackUI" type="CanvasLayer" parent="Inventory"]
+layer = 10
+visible = false
+
+[node name="Panel" type="PanelContainer" parent="Inventory/BackpackUI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260
+offset_top = -270
+offset_right = 260
+offset_bottom = 270
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Inventory/BackpackUI/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Inventory/BackpackUI/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "背包"
+
+[node name="GoldLabel" type="Label" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+layout_mode = 2
+text = "金币: 0"
+
+[node name="EquipScroll" type="ScrollContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EquipList" type="VBoxContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox/EquipScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ItemScroll" type="ScrollContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+
+[node name="ItemList" type="VBoxContainer" parent="Inventory/BackpackUI/Panel/Margin/VBox/ItemScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="CloseButton" type="Button" parent="Inventory/BackpackUI/Panel/Margin/VBox"]
+layout_mode = 2
+text = "关闭"
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Root" type="MarginContainer" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="HBox" type="HBoxContainer" parent="UI/Root"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="EnemyColumn" type="VBoxContainer" parent="UI/Root/HBox"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EnemyTitle" type="Label" parent="UI/Root/HBox/EnemyColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "敌人"
+
+[node name="EnemyScroll" type="ScrollContainer" parent="UI/Root/HBox/EnemyColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EnemyList" type="VBoxContainer" parent="UI/Root/HBox/EnemyColumn/EnemyScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="CenterColumn" type="VBoxContainer" parent="UI/Root/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TopButtons" type="HBoxContainer" parent="UI/Root/HBox/CenterColumn"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AutoButton" type="Button" parent="UI/Root/HBox/CenterColumn/TopButtons"]
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "自动战斗:关"
+
+[node name="DefendButton" type="Button" parent="UI/Root/HBox/CenterColumn/TopButtons"]
+custom_minimum_size = Vector2(100, 44)
+layout_mode = 2
+text = "防御"
+
+[node name="BackpackButton" type="Button" parent="UI/Root/HBox/CenterColumn/TopButtons"]
+custom_minimum_size = Vector2(100, 44)
+layout_mode = 2
+text = "背包"
+
+[node name="Log" type="RichTextLabel" parent="UI/Root/HBox/CenterColumn"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+size_flags_vertical = 3
+scroll_following = true
+text = "—— 战斗开始 ——"
+
+[node name="HeroColumn" type="VBoxContainer" parent="UI/Root/HBox"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeroTitle" type="Label" parent="UI/Root/HBox/HeroColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "英雄队伍"
+
+[node name="HeroScroll" type="ScrollContainer" parent="UI/Root/HBox/HeroColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HeroList" type="VBoxContainer" parent="UI/Root/HBox/HeroColumn/HeroScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="SkillScroll" type="ScrollContainer" parent="UI/Root/HBox/HeroColumn"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+
+[node name="SkillBox" type="VBoxContainer" parent="UI/Root/HBox/HeroColumn/SkillScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="AutoLabel" type="Label" parent="UI/Root/HBox/HeroColumn/SkillScroll/SkillBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "自动技能(回合循环)"
+
+[node name="AutoRow" type="FlowContainer" parent="UI/Root/HBox/HeroColumn/SkillScroll/SkillBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 4
+
+[node name="ActiveLabel" type="Label" parent="UI/Root/HBox/HeroColumn/SkillScroll/SkillBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "主动技能"
+
+[node name="ActiveRow" type="FlowContainer" parent="UI/Root/HBox/HeroColumn/SkillScroll/SkillBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 4
